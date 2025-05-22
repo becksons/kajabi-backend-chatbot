@@ -1,29 +1,28 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
 app.post('/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
 
-    const completion = await openai.createChatCompletion({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: userMessage }],
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: userMessage }]
     });
 
-    res.json({ reply: completion.data.choices[0].message.content });
+    res.json({ reply: completion.choices[0].message.content });
   } catch (error) {
-    console.error('OpenAI error:', error.response?.data || error.message);
+    console.error('OpenAI error:', error);
     res.status(500).json({ reply: 'Sorry, something went wrong!' });
   }
 });
