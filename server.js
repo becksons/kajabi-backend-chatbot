@@ -1,20 +1,17 @@
-// server.js
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const { Configuration, OpenAIApi } = require('openai');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import { Configuration, OpenAIApi } from 'openai';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Use environment variable for API key (add in Render dashboard)
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
 
-// Main chat endpoint
 app.post('/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -31,6 +28,5 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
