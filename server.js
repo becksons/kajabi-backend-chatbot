@@ -13,7 +13,7 @@ const openai = new OpenAI({
 });
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-const GOOGLE_SEARCH_ENGINE_ID = process.env.GOOGLE_SEARCH_ENGINE_ID; // Replace with your actual search engine ID
+const GOOGLE_SEARCH_ENGINE_ID = process.env.GOOGLE_SEARCH_ENGINE_ID; 
 
 async function performGoogleSearch(query) {
   const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}&cx=${GOOGLE_SEARCH_ENGINE_ID}`;
@@ -31,16 +31,16 @@ app.post('/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
 
-    // Step 1: Search Google for plugin/software suggestions
+    // first google plugin/software suggestions
     const searchContext = await performGoogleSearch(userMessage);
 
-    // Step 2: Send message to OpenAI with search context
+    // Step 2: Send search content response to openai
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
           role: 'system',
-          content: "You are an expert audio engineer. Based on the user's musical goals, recommend mixing/mastering techniques and specific plugins and software (VSTs, DAWs, etc.). If you have external information provided, consider it in your answer. You speak in the tone and personality of a popular and professional, famous recording engineer"
+          content: "You are an expert audio engineer who sounds like a professional, famous recording engineer. Recommend mixing/mastering techniques and specific plugins and software (VSTs, DAWs, etc.) based on what a musician is asking for. When possible, structure your answers clearly with bullet points, plugin names in bold, and separate sections like 'Suggested Plugins', 'Recommended DAWs', and 'Techniques'."
         },
         {
           role: 'user',
